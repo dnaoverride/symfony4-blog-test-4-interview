@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<div class="article-container container mt-8 main-article">
+    {% block main %}
+        <div class="row">
+            <div class="col-sm-4">
+                <img src="{{ article.imageURL }}" class="article-img" />
+            </div>
+            <div class="col-sm-8">
+                <h2>{{ article.title }}</h2>
+                <p class="post-metadata">
+                    <span class="metadata"><i class="fa fa-calendar"></i> {{ article.publishedAt|date('d-m-Y') }}</span>
+                    <span class="metadata"><i class="fa fa-user"></i> {{ article.user.fullname }}</span>
+                </p>
+            </div>
+            <hr>
+            <div class="row-sm-12 article-container">
+                {{ article.content|raw }}
+            </div>
+        </div>
+    {% endblock %}
+</div>
+
+
+{% endblock %}
