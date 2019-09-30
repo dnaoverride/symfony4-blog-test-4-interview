@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+{% block title %}Create New Article{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block content_body %}
+    XXXXX
+    {{ dump(app.user) }}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-8">
+                {#<h1>Launch a new Article! ?</h1>#}
+                {#{{ form_start(articleorm) }}#}
+                {#{{ form_widget(articleForm) }}#}
+                    {#<button type="submit" class="btn btn-primary">Create!</button>#}
+                {#{{ form_end(articleForm) }}#}
+                {{ form(articleForm) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -39,12 +39,12 @@
         <ul class="navbar-nav ml-auto">
             {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                 <li class="nav-item dropdown" style="margin-right: 75px;">
-                    <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="http://localhost:8000/" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <img class="nav-profile-img rounded-circle" src="{{ app.user.avatarUrl(100) }}">
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <a class="dropdown-item" href="{{ path('article_new') }}"> {{ app.user.username }} Profile</a>
-                        {% if is_granted('ROLE_ADMIN_ARTICLE') %}
+                        {% if is_granted('ROLE_EDIT_ARTICLE') %}
                             <a class="dropdown-item" href="{{ path('article_new') }}">Create Post</a>
                         {% endif %}
                         <a class="dropdown-item" href="{{ path('app_logout') }}">Logout</a>

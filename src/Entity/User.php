@@ -82,9 +82,11 @@ class User implements UserInterface, \Serializable
     {
         $roles = $this->roles;
 
-        $roles[] = 'ROLE_ADMIN_ARTICLE';
+        if (empty($roles)) {
+            $roles[] = ['ROLE_USER'];
+        }
 
-        return $this->roles;
+        return array_unique($roles);
     }
 
     public function setRoles(array $roles): self

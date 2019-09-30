@@ -14,7 +14,7 @@ class CommentsController extends AbstractController
     public function index(int $article_id, LoggerInterface $logger)
     {
         return $this->json([
-            'message' => 'Welcome to your new controller!',
+            'message' => 'Welcome to your manage controller!',
             'path' => 'src/Controller/CommentsController.php',
         ]);
     }

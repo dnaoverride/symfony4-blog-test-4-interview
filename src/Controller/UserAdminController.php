@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class UserAdminController extends AbstractController
 {
     /**
-     * @Route("/admin/user/new")
+     * @Route("/admin/user/manage")
      */
 
 

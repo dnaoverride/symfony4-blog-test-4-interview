@@ -11,7 +11,7 @@ class ArticleFixture extends AbstractFixture implements OrderedFixtureInterface
 {
     public function load(ObjectManager $manager)
     {
-        // $product = new Product();
+        // $product = manage Product();
         // $manager->persist($product);
 
         $manager->flush();

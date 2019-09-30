@@ -13,7 +13,7 @@ class CategoryController extends AbstractController
     public function index()
     {
         return $this->json([
-            'message' => 'Welcome to your new controller!',
+            'message' => 'Welcome to your manage controller!',
             'path' => 'src/Controller/CategoryController.php',
         ]);
     }

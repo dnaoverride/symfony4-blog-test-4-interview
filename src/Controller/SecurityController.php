@@ -2,10 +2,17 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
+use App\Form\UserRegistrationFormType;
+use App\Security\LoginFormAuthenticator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
+use Symfony\Component\HttpFoundation\Request;
+
 
 class SecurityController extends AbstractController
 {
@@ -14,9 +21,35 @@ class SecurityController extends AbstractController
     /**
      * @Route("/register", name="app_register")
      */
-    public function register()
+    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, GuardAuthenticatorHandler $guardHandler, LoginFormAuthenticator $formAuthenticator)
     {
-        return $this->render('security/register.html.twig');
+        $user = new User();
+        $roles = ['ROLE_USER','ROLE_EDIT_ARTICLE'];
+        $form = $this->createForm(UserRegistrationFormType::class, $user);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var User $user */
+            $user = $form->getData();
+
+            $user->setPassword($passwordEncoder->encodePassword(
+                $user,
+                $user->getPassword()
+            ));
+            $user->setRoles($roles);
+            $em = $this->getDoctrine()->getManager();
+
+            $em->persist($user);
+            $em->flush();
+
+            $this->addFlash('success', 'Welcome '.$user->getEmail());
+            return $this->redirectToRoute("blog_index");
+        }
+
+
+        return $this->render('security/register.html.twig', [
+            'registration_form' => $form->createView(),
+        ]);
     }
 
     /**
@@ -24,15 +57,8 @@ class SecurityController extends AbstractController
      */
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        // if ($this->getUser()) {
-        //    $this->redirectToRoute('target_path');
-        // }
-
-        // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
-        // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
-
         return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
     }
 
