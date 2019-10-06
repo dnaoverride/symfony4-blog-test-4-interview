@@ -42,7 +42,7 @@ class SecurityController extends AbstractController
             $em->persist($user);
             $em->flush();
 
-            $this->addFlash('success', 'Welcome '.$user->getEmail());
+            $this->addFlash('success', 'Welcome '.$user->getFullname());
             return $this->redirectToRoute("blog_index");
         }
 

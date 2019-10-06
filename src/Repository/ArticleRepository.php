@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Article;
 use App\Entity\Category;
+use App\Entity\User;
 use App\Pagination\Paginator;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -61,6 +62,20 @@ class ArticleRepository extends ServiceEntityRepository
             $qb->andWhere(':category MEMBER OF a.category_id')
                 ->setParameter('category_id', $category);
         }
+
+        return (new Paginator($qb))->paginate($page);
+    }
+
+    public function findUserArticles (int $page = 1, User $user) : Paginator
+    {
+        $qb = $this->createQueryBuilder('a')
+            ->innerJoin('a.user', 'u')
+            ->where('a.publishedAt <= :now')
+            ->andWhere('a.user = :user')
+            ->orderBy('a.publishedAt', 'DESC')
+            ->setParameter('now', new \DateTime())
+            ->setParameter('user', $user)
+        ;
 
         return (new Paginator($qb))->paginate($page);
     }

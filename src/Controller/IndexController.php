@@ -41,7 +41,7 @@ class IndexController extends AbstractController
 
     /**
      * @Route("/", defaults={"page": "1", "_format"="html"}, methods={"GET"}, name="blog_index")
-     *
+     * @Route("/page/{page<[1-9]\d*>}", defaults={"_format"="html"}, methods={"GET"}, name="blog_index_paginated")
      */
     public function index(Request $request, int $page, ArticleRepository $articles, CategoryRepository $category): Response
     {

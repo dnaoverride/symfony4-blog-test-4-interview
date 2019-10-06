@@ -18,15 +18,15 @@ class ArticleFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title',TextType::class)
-            ->add('content',TextareaType::class)
-            ->add('create',  SubmitType::class)
             ->add('category', EntityType::class, [
                 'class' => Category::class,
                 'choice_label' => function(Category $category) {
-                    return sprintf('(%d) %s', $category->getId(), $category->getName());
+                    return sprintf('%s', $category->getName());
                 },
-                ])
+            ])
+            ->add('title',TextType::class)
+            ->add('content',TextareaType::class)
+            ->add('create',  SubmitType::class)
         ;
     }
 

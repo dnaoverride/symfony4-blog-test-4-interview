@@ -1,0 +1,7 @@
+<form action="{{ path('article_delete', {id: article.id}) }}" method="post" data-confirmation="true" id="delete-button-form">
+    <input type="hidden" name="token" value="{{ csrf_token('delete') }}" />
+    <button type="submit" class="btn btn-lg btn-block btn-danger" onclick="return confirm('Are you sure you want to delete article?')">
+        <i class="fa fa-trash" aria-hidden="true"></i>
+        Delete Article
+    </button>
+</form>

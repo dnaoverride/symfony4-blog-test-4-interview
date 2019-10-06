@@ -7,24 +7,141 @@
 <style>
     .main-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
     .main-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+
 </style>
     <div class="container">
         {% block main %}
-            {% for article in paginator.results %}
-                <h2>
-                    <a href="{{ path('article_show',{ 'slug' : article.articleslug } ) }}">
-                        {{ article.title }}
-                    </a>
-                </h2>
+            {% if paginator.results|length > 0 %}
+                {% for article in paginator.results %}
+                    <div class="article" style="border: #313131 2px solid; padding: 20px 50px; margin-bottom: 20px;">
+                        <div class="row">
+                            <div class="col-12">
+                                <img class="comment-img rounded-circle" src="https://robohash.org/{{ article.user.email }}?size=100x100">
+                            </div>
+                            <div class="col-12">
+                            <h3>
+                                <a href="{{ path('article_show',{ 'slug' : article.articleslug } ) }}">
+                                    {{ article.title }}
+                                </a>
+                            </h3>
+                            </div>
+                            <div class="col-12">
+                            <p class="post-metadata">
+                                <span class="metadata"><i class="fa fa-calendar"></i> {{ article.publishedAt|date('d-m-Y') }}</span>&nbsp;
+                                <span class="metadata"><i class="fa fa-clock-o"></i> {{ article.publishedAt|date('H:i:s') }}</span>
+                                <span class="metadata"><i class="fa fa-user"></i> {{ article.user.fullname }}</span>
+                                <span class="metadata"><i class="fa fa-bookmark"></i> {{ article.category.name }}</span>
+                            </p>
+                            </div>
+                        </div>
+                        <div class="row content">
+                            {{ article.content }}
+                        </div>
+                        <div class="row">
+                            <div class="col-2 mr-auto">
+                                <strong>Comments:</strong> {{ article.comments|length }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 comments">
+                                {% for comment in article.comments %}
+                                    <div class="row comment-bg">
+                                        <div class="col-1">
+                                            <img class="comment-img rounded-circle spacer" src="https://robohash.org/{{ comment.user.email }}?size=100x100">
+                                        </div>
+                                        {% if (app.user == comment.user) %}
+                                        <div class="row">
+                                            <a class="comment-edit" href="{{ path('edit_comment',{'commentid':comment.id}) }}">
+                                                <i class="fa fa-2x fa-edit" aria-hidden="true"></i>
+                                            </a>
+                                            <a class="comment-delete" href="{{ path('delete_comment',{'commentid':comment.id}) }}">
+                                                <i class="fa fa-2x fa-trash" aria-hidden="true"></i>
+                                            </a>
+                                        </div>
+                                        {% endif %}
+                                        <div class="col-sm-12">
+                                            <div class="comment-container d-inline-block pl-3 align-top">
+                                                <span class="commenter-name">{{ comment.user.fullname }}</span>
+                                                <br>
+                                                <span class="title"><h5>{{ comment.title }}</h5></span>
+                                                <small>Date: {{ comment.createdAt|date('Y-m-d') }}</small>
+                                                <small>Time: {{ comment.createdAt|date('H:i:s') }}</small>
+                                                <br>
+                                                <span><textarea class="comment-body not-editable"   cols="100" readonly="readonly">{{ comment.commenttext }}</textarea> </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row spacer"></div>
+                                {% endfor %}
 
-                <p class="post-metadata">
-                    <span class="metadata"><i class="fa fa-calendar"></i> {{ article.publishedAt|date('d-m-Y') }}</span>
-                    <span class="metadata"><i class="fa fa-user"></i> {{ article.user.fullname }}</span>
-                </p>
-            {% endfor %}
+                            </div>
+                        </div>
+                        <button class="btn ml-auto comment-div" article-id="{{ article.id }}">Add comment <i class="fa fa-plus" aria-hidden="true"></i></button>
+                        <div class="row hidden-comment-form" id="comment-article-{{ article.id }}">
+                            <div class="form-wrapper">
+                                <form class=""form-comment-{{ article.id }}" id="form-comment-{{ article.id }}" action="{{ path('article_comment',{'articleid':article.id}) }}" method="post">
+                                    <div class="col-sm-10">
+                                        <label for="name">Comment title:</label>
+                                        <br>
+                                        <input type="text" class="comment-title" name="title" >
+                                    </div>
+                                    <div class="col-sm-10">
+                                        <label for="comment">Comment:</label>
+                                        <br>
+                                        <textarea class="comment-bg" name="comment"  rows="4" cols="100">
+                                        </textarea>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <button class="btn btn-success" type="submit">Comment</button>
+                                    </div>
+                                <input type="hidden" name="article-id" id="article-id" value="{{ article.id }}">
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                {% endfor %}
+                {% if paginator.hasToPaginate %}
+                    <div class="navigation text-center">
+                        <ul class="pagination">
+                            {% if paginator.hasPreviousPage %}
+                                <li class="prev"><a href="{{ path('blog_index_paginated', {page: paginator.previousPage}) }}" rel="previous"><i class="fa fw fa-long-arrow-left"></i> Previous</a></li>
+                            {% else %}
+                                <li class="prev disabled"><span><i class="fa fw fa-arrow-left"></i> Previous</span></li>
+                            {% endif %}
+
+                            {% for i in 1..paginator.lastPage %}
+                                {% if i == paginator.currentPage %}
+                                    <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                                {% else %}
+                                    <li><a href="{{ path('blog_index_paginated', {page: i}) }}">{{ i }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if paginator.hasNextPage %}
+                                <li class="next"><a href="{{ path('blog_index_paginated', {page: paginator.nextPage}) }}" rel="next">Next <i class="fa fw fa-arrow-right"></i></a></li>
+                            {% else %}
+                                <li class="next disabled"><span>Next <i class="fa fw fa-arrow-right"></i></span></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="article-container">
+                    <h2>No articles found!</h2>
+                </div>
+            {% endif %}
         {% endblock %}
 
 
     </div>
+
+
+
+
+
+        {#<script src="{{ asset('js/jquery-3.4.1.js') }}"></script>#}
+        {#<script src="{{ asset('js/comment.js') }}"></script>#}
+
 
 {% endblock %}

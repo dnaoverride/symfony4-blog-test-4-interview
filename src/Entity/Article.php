@@ -29,7 +29,7 @@ class Article
     private $content;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="article")
+     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="article", orphanRemoval=true)
      */
     private $comments;
 

@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>{% block title %}Welcome to the SpaceBar{% endblock %}</title>
+    <title>{% block title %}Marko's blog{% endblock %}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -22,7 +22,7 @@
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a style="color: #fff;" class="nav-link nav-strong" href="{{ absolute_url('/article') }}">My Articles</a>
+                <a style="color: #fff;" class="nav-link nav-strong" href="{{ absolute_url('/myarticles') }}">My Articles</a>
             </li>
             <li class="nav-item">
                 <a style="color: #fff;" class="nav-link" href="#">Link 1</a>
@@ -39,13 +39,14 @@
         <ul class="navbar-nav ml-auto">
             {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                 <li class="nav-item dropdown" style="margin-right: 75px;">
-                    <a class="nav-link dropdown-toggle" href="http://localhost:8000/" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <img class="nav-profile-img rounded-circle" src="{{ app.user.avatarUrl(100) }}">
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <a class="dropdown-item" href="{{ path('article_new') }}"> {{ app.user.username }} Profile</a>
                         {% if is_granted('ROLE_EDIT_ARTICLE') %}
-                            <a class="dropdown-item" href="{{ path('article_new') }}">Create Post</a>
+                            <a class="dropdown-item" href="{{ path('article_new') }}">Create Article</a>
+                            <a class="dropdown-item" href="{{ path('categoies_show') }}">Categories</a>
                         {% endif %}
                         <a class="dropdown-item" href="{{ path('app_logout') }}">Logout</a>
                     </div>
@@ -61,24 +62,41 @@
         </ul>
     </div>
 </nav>
-
+<div class="row">
+    <div class="col-md-12 col-lg-12 col-xl-12">
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}" role="alert">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+</div>
 {% block body %}{% endblock %}
 
-<footer class="footer">
-    <div class="row">
-        <div class="author">Created By: Marko Marinovic</div>
-    </div>
+    <footer class="footer">
+        <div class="row">
+            <div class="author">Created By: Marko Marinovic</div>
+        </div>
+    </footer>
 
-</footer>
 
 
-{% block javascripts %}
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
-    <script>
+    <script >
         $('.dropdown-toggle').dropdown();
     </script>
-{% endblock %}
+    <script>
+        $('.comment-div').click(function() {
+
+            $(this).next('.hidden-comment-form').toggle('slow');
+        });
+    </script>
+
+
 </body>
 </html>

@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit category{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-8">
+                <h1>Edit category</h1>
+                {#{{ form(category_form) }}#}
+
+
+                {{ form_start(category_form) }}
+                {{ form_row(category_form.name) }}
+                {{ form_row(category_form.create, { 'label': 'Save' }) }}
+                {{ form_end(category_form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

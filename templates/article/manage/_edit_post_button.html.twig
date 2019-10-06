@@ -1,0 +1,7 @@
+<form action="{{ path('article_edit', {id: article.id}) }}" method="post" data-confirmation="true" id="edit-button-form">
+    <input type="hidden" name="token" value="{{ csrf_token('edit') }}" />
+    <button type="submit" class="btn btn-lg btn-block btn-success float-right">
+        <i class="fa fa-edit" aria-hidden="true"></i>
+        Edit Article
+    </button>
+</form>

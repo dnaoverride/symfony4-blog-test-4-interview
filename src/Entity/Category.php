@@ -24,14 +24,14 @@ class Category
     private $name;
 
     /**
-     * @ORM\Column(type="string", length=128)
-     */
-    private $category_slug;
-
-    /**
      * @ORM\OneToMany(targetEntity="App\Entity\Article", mappedBy="category", orphanRemoval=true)
      */
     private $articles;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
 
     public function __construct()
     {
@@ -94,6 +94,18 @@ class Category
                 $article->setCategory(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }

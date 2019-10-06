@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Article{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            {{ include('article/manage/_delete_post_button.html.twig', {article: article}, with_context = false) }}
+        </div>
+
+        <div class="row">
+            <div class="col-sm-8">
+                <h1>Edit Article</h1>
+                {{ form_start(article_form) }}
+                    {{ form_row(article_form.category) }}
+                    {{ form_row(article_form.title) }}
+                    {{ form_row(article_form.content) }}
+                    {{ form_row(article_form.create, { 'label': 'Save' }) }}
+                {{ form_end(article_form) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2 mr-auto">
+                <strong>Comments:</strong> {{ article.comments|length }}
+            </div>
+        </div>
+
+
+    </div>
+{% endblock %}

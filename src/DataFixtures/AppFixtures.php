@@ -71,7 +71,7 @@ class AppFixtures extends Fixture
                 'm4rk0123'
             )
         );
-        $user->setRoles(["ROLE_ADMIN","ROLE_USER"]);
+        $user->setRoles(["ROLE_ADMIN","ROLE_USER","ROLE_EDIT_ARTICLE"]);
 
         $this->setReference('user', $user);
 
@@ -84,6 +84,7 @@ class AppFixtures extends Fixture
         $category = new Category();
         $category->setName('First Category');
         $category->setCategorySlug('first-category');
+        $category->setCreatedAt(new \DateTime());
 
         $this->setReference('category', $category);
         $manager->persist($category);

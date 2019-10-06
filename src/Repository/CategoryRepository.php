@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Category;
+use App\Pagination\Paginator;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -32,16 +33,24 @@ class CategoryRepository extends ServiceEntityRepository
             ->setMaxResults(10)
             ->getQuery()
             ->getResult()
-        ;
+            ;
     }
 
-    public function findOneBySomeField($value): ?Category
+//    public function findOneBySomeField($value): ?Category
+//    {
+//        return $this->createQueryBuilder('c')
+//            ->andWhere('c.exampleField = :val')
+//            ->setParameter('val', $value)
+//            ->getQuery()
+//            ->getOneOrNullResult()
+//        ;
+//    }
+
+    public function paginatedCategories($page = 1) : Paginator
     {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
+        $qb = $this->createQueryBuilder('c')
+            ->orderBy('c.id', 'ASC')
         ;
+        return (new Paginator($qb))->paginate($page);
     }
 }

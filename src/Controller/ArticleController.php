@@ -3,15 +3,19 @@
 namespace App\Controller;
 
 use App\Entity\Article;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Form\ArticleFormType;
+use App\Repository\ArticleRepository;
+use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\ORMException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Cocur\Slugify\Slugify;
-use Faker;
+use Symfony\Component\Security\Core\User\UserInterface;
+
 
 
 class ArticleController extends AbstractController
@@ -33,25 +37,52 @@ class ArticleController extends AbstractController
         $this->userRepository = $entityManager->getRepository('App:User');
     }
 
+
     /**
-     * @Route("/article", name="article")
+     * @Route("/myarticles", name="my_articles")
+     * @Route("/myarticles", defaults={"page": "1", "_format"="html"}, methods={"GET"}, name="my_articles")
+     * @Route("/myarticles/page/{page<[1-9]\d*>}", defaults={"_format"="html"}, methods={"GET"}, name="my_articles_paginated")
      */
-    public function index()
+    public function myArticles(Request $request, int $page, ArticleRepository $articles): Response
     {
-        return $this->render('article/article.html.twig', [
-            'controller_name' => 'IndexController',
+        $user = $this->getUser();
+        if ($user != null) {
+            $articles = $articles->findUserArticles($page, $user);
+        }
+        else {
+            $this->addFlash('danger','Not logged in!');
+            return $this->redirectToRoute('blog_index');
+        }
+
+        return $this->render('article/myarticles.html.twig', [
+            'paginator' => $articles,
         ]);
     }
 
     /**
      * @Route("/article/{slug}", name="article_show", methods={"GET"})
+     *
      */
-    public function show($slug, Request $request) : Response
+    //@Route("/article/{id}", name="article_show", methods={"GET"}), int $id
+    public function show(Request $request, ArticleRepository $articleRepository, $slug) : Response
     {
+        if (defined("id")) {
+            dump("NOT ID");die();
+        }
+        $currentUser = $this->getUser();
         $article = $this->articleRepository->findOneBy(['articleslug'=>$request->get('slug')]);
 
+        if ($currentUser == $article->getUser()){
+            $canEdit = true;
+        }
+        else
+        {
+            $canEdit = false;
+        }
+
         return $this->render('article/show.html.twig', [
-            'article'=> $article,
+            'article' => $article,
+            'canedit' => $canEdit,
         ]);
     }
 
@@ -63,7 +94,6 @@ class ArticleController extends AbstractController
     {
         $slugify = new Slugify();
         $article = new Article();
-        $faker = new Faker\Factory();
         $form = $this->createForm(ArticleFormType::class,$article);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -71,14 +101,79 @@ class ArticleController extends AbstractController
             $article = $form->getData();
             $slug = $slugify->slugify($article->getTitle());
             $article->setArticleslug($slug);
-
+            $user = $this->getUser();
+            $article->setUser($user);
+            $article->setImageURL('https://lorempixel.com/800/600/technics/');
+            $article->setPublishedAt(new \DateTime());
             $em->persist($article);
             $em->flush();
-            $this->addFlash('success', 'Article Created! Knowledge is power!');
+            $this->addFlash('success', 'Article Created');
             return $this->redirectToRoute('blog_index');
         }
         return $this->render('article/manage/new.html.twig', [
-            'article_form' => $form->createView()
+            'article_form' => $form->createView(),
         ]);
     }
+
+    /**
+     * @Route("/article/manage/edit/{id}", name="article_edit", methods={"POST"})
+     * @IsGranted("ROLE_EDIT_ARTICLE", subject="article")
+     */
+    public function edit(Article $article, Request $request, EntityManagerInterface $em)
+    {
+
+        $form = $this->createForm(ArticleFormType::class, $article);
+        $user = $this->getUser();
+        if ($user === $article->getUser())
+        {
+
+            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                $em->persist($article);
+                $em->flush();
+                $this->addFlash('success', 'Article Updated!');
+                return $this->redirectToRoute('my_articles', [
+                    'article' => $article,
+                    'id' => $article->getId(),
+                ]);
+            }
+        }
+        else {
+            $this->addFlash('danger','Not allowed to edit someoone\'s article!!!!');
+
+        }
+        return $this->render('article/manage/edit.html.twig', [
+            'article_form' => $form->createView(),
+            'article' => $article,
+            'id' => $article->getId(),
+        ]);
+    }
+
+    /**
+     * @Route("/article/manage/delete/{id}", name="article_delete", methods={"POST"})
+     * @IsGranted("ROLE_EDIT_ARTICLE")
+     *
+     */
+    public function delete(Article $article, Request $request, EntityManagerInterface $em)
+    {
+
+        $user = $this->getUser();
+        $existingArticle = $this->articleRepository->findOneBy(['id' => $article->getId()]);
+        if ($user === $article->getUser()) {
+            $em->remove($article);
+            $em->flush();
+            $this->addFlash('success','Article deleted.');
+        }
+        else
+        {
+            $this->addFlash('danger','Not allowed to delete someone else article!!!');
+
+        }
+        return $this->redirectToRoute('my_articles');
+
+    }
+
+
+
+
 }

@@ -1,25 +1,70 @@
 {% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
 {% block body %}
-<div class="article-container container mt-8 main-article">
+
     {% block main %}
-        <div class="row">
-            <div class="col-sm-4">
-                <img src="{{ article.imageURL }}" class="article-img" />
+        {% if canedit %}
+            <div class="container">
+                <div class="row">
+                    <div class="col-6 float-right">
+                        {{ include('article/manage/_edit_post_button.html.twig', {article: article}, with_context = false) }}
+                    </div>
+                    <div class="col-6 float-right">
+                        {{ include('article/manage/_delete_post_button.html.twig', {article: article}, with_context = false) }}
+                    </div>
+                </div>
             </div>
-            <div class="col-sm-8">
-                <h2>{{ article.title }}</h2>
-                <p class="post-metadata">
-                    <span class="metadata"><i class="fa fa-calendar"></i> {{ article.publishedAt|date('d-m-Y') }}</span>
-                    <span class="metadata"><i class="fa fa-user"></i> {{ article.user.fullname }}</span>
-                </p>
+        {% endif %}
+        <div class="article-container container mt-8 article">
+            <div class="row">
+                <div class="col-sm-4">
+                    <img src="{{ article.imageURL }}" class="article-img" />
+                </div>
+                <div class="col-sm-8">
+                    <h2>{{ article.title }}</h2>
+                    <p class="post-metadata">
+                        <span class="metadata"><i class="fa fa-calendar"></i> {{ article.publishedAt|date('d-m-Y') }}</span>&nbsp;&nbsp;
+                        <span class="metadata"><i class="fa fa-user"></i> {{ article.user.fullname }}</span>&nbsp;&nbsp;
+                        <span class="metadata"><i class="fa fa-bookmark"></i> {{ article.category.name }}</span>
+                    </p>
+                </div>
+                <hr>
+                <div class="row-sm-12 article-container">
+                    {{ article.content|raw }}
+                </div>
             </div>
-            <hr>
-            <div class="row-sm-12 article-container">
-                {{ article.content|raw }}
+            <div class="row">
+                <div class="col-12 comments">
+                    {% for comment in article.comments %}
+                        <div class="row comment-bg">
+                            <div class="">
+                                <img class="comment-img rounded-circle spacer" src="https://robohash.org/{{ comment.user.email }}?size=100x100">
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="comment-container d-inline-block pl-3 align-top">
+                                    <span class="commenter-name">{{ comment.user.fullname }}</span>
+                                    <br>
+                                    <span class="title"><h5>{{ comment.title }}</h5></span>
+                                    <small>Date: {{ comment.createdAt|date('Y-m-d') }}</small>
+                                    <small>Time: {{ comment.createdAt|date('H:i:s') }}</small>
+                                    <br>
+                                    <span class="comment-body"> {{ comment.commenttext }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row spacer"></div>
+                    {% endfor %}
+
+                </div>
             </div>
         </div>
+
     {% endblock %}
-</div>
+
 
 
 {% endblock %}
