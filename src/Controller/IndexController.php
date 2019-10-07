@@ -33,7 +33,7 @@ class IndexController extends AbstractController
      * @Route("/", defaults={"page": "1", "_format"="html"}, methods={"GET"}, name="blog_index")
      * @Route("/page/{page<[1-9]\d*>}", defaults={"_format"="html"}, methods={"GET"}, name="blog_index_paginated")
      */
-    public function index(Request $request, int $page, ArticleRepository $articles, CategoryRepository $category): Response
+    public function index(Request $request, int $page, ArticleRepository $articles, CategoryRepository $category,int $commentid = null): Response
     {
         $category = null;
         if ($request->query->has('category')) {
@@ -43,7 +43,7 @@ class IndexController extends AbstractController
 
         return $this->render('index/index.html.twig', [
             'paginator' => $latestArticles,
-
+            'editcommentid' => $commentid,
         ]);
     }
 }
