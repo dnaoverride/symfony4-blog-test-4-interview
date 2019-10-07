@@ -324,24 +324,29 @@ html {height:100%}
 }
 .comment-bg {
     padding: 5px 10px;
+    margin-bottom: 5px;
     background-color: #dddddd;
     border: #222222 1px solid;
     border-radius: 5px;
+}
+.comment-bg.edit {
+    background-color: #eeeeee;
+
 }
 .comment-title {
     width: 500px!important;
     padding: 5px 10px;
-    background-color: #dddddd;
+    background-color: #eeeeee;
     border: #222222 1px solid;
     border-radius: 5px;
 }
-.comment-edit{
+.comment-edit-icon{
     width: 70px;
     padding-left: 40px!important;
     padding-top: 15px;
     color: #222222;
 }
-.comment-delete{
+.comment-delete-icon{
     padding-left: 10px!important;
     padding-top: 15px;
     color: #222222;

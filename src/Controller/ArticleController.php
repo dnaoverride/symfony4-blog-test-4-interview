@@ -40,8 +40,8 @@ class ArticleController extends AbstractController
 
     /**
      * @Route("/myarticles", name="my_articles")
-     * @Route("/myarticles", defaults={"page": "1", "_format"="html"}, methods={"GET"}, name="my_articles")
-     * @Route("/myarticles/page/{page<[1-9]\d*>}", defaults={"_format"="html"}, methods={"GET"}, name="my_articles_paginated")
+     * @Route("/myarticles", defaults={"page": "1"}, methods={"GET"}, name="my_articles")
+     * @Route("/myarticles/page/{page<[1-9]\d*>}", methods={"GET"}, name="my_articles_paginated")
      */
     public function myArticles(Request $request, int $page, ArticleRepository $articles): Response
     {
@@ -64,7 +64,7 @@ class ArticleController extends AbstractController
      *
      */
     //@Route("/article/{id}", name="article_show", methods={"GET"}), int $id
-    public function show(Request $request, ArticleRepository $articleRepository, $slug) : Response
+    public function show(Request $request, ArticleRepository $articleRepository, $slug, int $editCommentId = null ) : Response
     {
         if (defined("id")) {
             dump("NOT ID");die();
@@ -73,16 +73,20 @@ class ArticleController extends AbstractController
         $article = $this->articleRepository->findOneBy(['articleslug'=>$request->get('slug')]);
 
         if ($currentUser == $article->getUser()){
-            $canEdit = true;
+            $userHaveRightsToEdit = true;
         }
         else
         {
-            $canEdit = false;
+            $userHaveRightsToEdit = false;
         }
-
+//        $A = [1, 1, 1, 2,1,1];
+//        $turtle = $this->turtle($A);
+//
+//        dump($turtle);
         return $this->render('article/show.html.twig', [
             'article' => $article,
-            'canedit' => $canEdit,
+            'canedit' => $userHaveRightsToEdit,
+            'editcommentid' => $editCommentId,
         ]);
     }
 
@@ -173,6 +177,14 @@ class ArticleController extends AbstractController
 
     }
 
+    public function turtle(Array $A) {
+
+        for ($i=3;$i<count($A);$i++) {
+            if ($A[$i - 1] <= $A[$i - 3] && ($A[$i] >= $A[$i - 2] || $A[$i - 1] >= $A[$i - 3] - ($A[$i - 5] || 0) && $A[$i] >= $A[$i - 2] - $A[$i - 4] && $A[$i - 2] >= $A[$i - 4]))
+                return $i;
+        }
+        return -1;
+    }
 
 
 

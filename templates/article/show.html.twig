@@ -40,23 +40,56 @@
             <div class="row">
                 <div class="col-12 comments">
                     {% for comment in article.comments %}
-                        <div class="row comment-bg">
-                            <div class="">
-                                <img class="comment-img rounded-circle spacer" src="https://robohash.org/{{ comment.user.email }}?size=100x100">
-                            </div>
-                            <div class="col-sm-12">
-                                <div class="comment-container d-inline-block pl-3 align-top">
-                                    <span class="commenter-name">{{ comment.user.fullname }}</span>
-                                    <br>
-                                    <span class="title"><h5>{{ comment.title }}</h5></span>
-                                    <small>Date: {{ comment.createdAt|date('Y-m-d') }}</small>
-                                    <small>Time: {{ comment.createdAt|date('H:i:s') }}</small>
-                                    <br>
-                                    <span class="comment-body"> {{ comment.commenttext }}</span>
+                        {% if comment.id == editcommentid %}
+                            <div class="row comment-bg">
+                                <div class="">
+                                    <img class="comment-img rounded-circle spacer" src="https://robohash.org/{{ comment.user.email }}?size=100x100">
+                                </div>
+                                <div class="col-sm-12">
+                                    <div class="comment-container d-inline-block pl-3 align-top">
+                                        <span class="commenter-name">{{ comment.user.fullname }}</span>
+                                        <br>
+                                        <form name="editcomment" action="{{ path('edit_comment',{'commentid': editcommentid}) }}">
+                                            <label for="title">Comment title:</label><br>
+                                            <input type="text" class="comment-title" name="title" value="{{ comment.title }}"><br>
+                                            <label for="commenttext">Comment:</label><br>
+                                            <textarea name="commenttext" class="comment-bg edit" cols="100">{{ comment.commenttext }}</textarea><br>
+                                            <input type="hidden" name="processed" value="1">
+                                            <button type="submit">Save</button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row spacer"></div>
+                        {% else %}
+                            <div class="row comment-bg">
+                                <div class="">
+                                    <img class="comment-img rounded-circle spacer" src="https://robohash.org/{{ comment.user.email }}?size=100x100">
+                                </div>
+                                {% if (app.user == comment.user) %}
+                                    <div class="row">
+                                        <a class="comment-edit-icon" href="{{ path('edit_comment',{'commentid':comment.id}) }}">
+                                            <i class="fa fa-2x fa-edit" aria-hidden="true"></i>
+                                        </a>
+                                        <a class="comment-delete-icon" href="{{ path('delete_comment',{'commentid':comment.id}) }}" onclick="return confirm('Are you sure you want to delete comment?')">
+                                            <i class="fa fa-2x fa-trash" aria-hidden="true"></i>
+                                        </a>
+                                    </div>
+                                {% endif %}
+                                <div class="col-sm-12">
+                                    <div class="comment-container d-inline-block pl-3 align-top">
+                                        <span class="commenter-name">{{ comment.user.fullname }}</span>
+                                        <br>
+                                        <span class="title"><h5>{{ comment.title }}</h5></span>
+                                        <small>Date: {{ comment.createdAt|date('Y-m-d') }}</small>
+                                        <small>Time: {{ comment.createdAt|date('H:i:s') }}</small>
+                                        <br>
+                                        <span class="comment-wrapper"><textarea class="comment-body not-editable" cols="100" readonly="true">{{ comment.commenttext }}</textarea> </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row spacer"></div>
+                        {% endif %}
+
                     {% endfor %}
 
                 </div>

@@ -51,10 +51,10 @@
                                         </div>
                                         {% if (app.user == comment.user) %}
                                         <div class="row">
-                                            <a class="comment-edit" href="{{ path('edit_comment',{'commentid':comment.id}) }}">
+                                            <a class="comment-edit-icon" href="{{ path('edit_comment',{'commentid':comment.id}) }}">
                                                 <i class="fa fa-2x fa-edit" aria-hidden="true"></i>
                                             </a>
-                                            <a class="comment-delete" href="{{ path('delete_comment',{'commentid':comment.id}) }}">
+                                            <a class="comment-delete-icon" href="{{ path('delete_comment',{'commentid':comment.id}) }}" onclick="return confirm('Are you sure you want to delete comment?')">
                                                 <i class="fa fa-2x fa-trash" aria-hidden="true"></i>
                                             </a>
                                         </div>
@@ -67,7 +67,7 @@
                                                 <small>Date: {{ comment.createdAt|date('Y-m-d') }}</small>
                                                 <small>Time: {{ comment.createdAt|date('H:i:s') }}</small>
                                                 <br>
-                                                <span><textarea class="comment-body not-editable"   cols="100" readonly="readonly">{{ comment.commenttext }}</textarea> </span>
+                                                <span class="comment-wrapper"><textarea class="comment-body not-editable" cols="100" readonly="true">{{ comment.commenttext }}</textarea> </span>
                                             </div>
                                         </div>
                                     </div>

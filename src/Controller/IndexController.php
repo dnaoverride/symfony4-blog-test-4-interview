@@ -30,16 +30,6 @@ class IndexController extends AbstractController
     }
 
     /**
-     * @Route("/aaa", name="indexaaa")
-     */
-    public function indexaaa()
-    {
-        return $this->render('index/index.html.twig', [
-            'controller_name' => 'IndexController',
-        ]);
-    }
-
-    /**
      * @Route("/", defaults={"page": "1", "_format"="html"}, methods={"GET"}, name="blog_index")
      * @Route("/page/{page<[1-9]\d*>}", defaults={"_format"="html"}, methods={"GET"}, name="blog_index_paginated")
      */

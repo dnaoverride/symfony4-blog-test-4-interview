@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Comment;
+use App\Repository\ArticleRepository;
 use App\Repository\CommentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,17 +31,6 @@ class CommentsController extends AbstractController
         $this->articleRepository = $entityManager->getRepository('App:Article');
         $this->userRepository = $entityManager->getRepository('App:User');
         $this->commentRepository = $entityManager->getRepository('App:Comment');
-    }
-
-    /**
-     * @Route("/article/comments", name="comments")
-     */
-    public function index()
-    {
-        return $this->json([
-            'message' => 'Welcome to your manage controller!',
-            'path' => 'src/Controller/CommentsController.php',
-        ]);
     }
 
     /**
@@ -72,12 +62,39 @@ class CommentsController extends AbstractController
     /**
      * @Route("/comment/edit/{commentid}/", name="edit_comment", methods={"GET"})
      */
-    public function editComment(Request $request, CommentRepository $commentRepository, int $commentid)
+    public function editComment(Request $request, CommentRepository $commentRepository, ArticleRepository $articleRepository, int $commentid, $canEdit = true, EntityManagerInterface $em)
     {
-        $comment = CommentRepository::class;
+        $currentUser = $this->getUser();
         $comment = $this->commentRepository->findOneBy(['id' => $commentid]);
+        $article = $this->articleRepository->findOneBy(['id' => $comment->getArticle()]);
+        if ($currentUser == $comment->getUser())
+        {
+            $processed = null;
+            if ($request->query->has('processed'))
+            {
+                $comment->setTitle($request->get('title'));
+                $comment->setCommentText($request->get('commenttext'));
+                $comment->setUser($currentUser);
+                $comment->setArticle($article);
+                $comment->setModifiedAt(new \DateTime());
 
-        dump($comment);
+                $em->persist($comment);
+                $em->flush();
+                $this->addFlash('success','Comment updated!');
+                $processed = null;
+                return $this->redirectToRoute('blog_index');
+            }
+        }
+        else
+        {
+            $this->addFlash('danger','You can not edit comment of another user!!!');
+        }
+
+        return $this->render('article/show.html.twig', [
+            'article' => $article,
+            'canedit' => $canEdit,
+            'editcommentid' => $commentid,
+        ]);
     }
 
     /**

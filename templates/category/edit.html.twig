@@ -10,9 +10,6 @@
         <div class="row">
             <div class="col-sm-8">
                 <h1>Edit category</h1>
-                {#{{ form(category_form) }}#}
-
-
                 {{ form_start(category_form) }}
                 {{ form_row(category_form.name) }}
                 {{ form_row(category_form.create, { 'label': 'Save' }) }}
