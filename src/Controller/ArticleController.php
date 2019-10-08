@@ -79,10 +79,7 @@ class ArticleController extends AbstractController
         {
             $userHaveRightsToEdit = false;
         }
-//        $A = [1, 1, 1, 2,1,1];
-//        $turtle = $this->turtle($A);
-//
-//        dump($turtle);
+       
         return $this->render('article/show.html.twig', [
             'article' => $article,
             'canedit' => $userHaveRightsToEdit,
@@ -177,14 +174,7 @@ class ArticleController extends AbstractController
 
     }
 
-    public function turtle(Array $A) {
 
-        for ($i=3;$i<count($A);$i++) {
-            if ($A[$i - 1] <= $A[$i - 3] && ($A[$i] >= $A[$i - 2] || $A[$i - 1] >= $A[$i - 3] - ($A[$i - 5] || 0) && $A[$i] >= $A[$i - 2] - $A[$i - 4] && $A[$i - 2] >= $A[$i - 4]))
-                return $i;
-        }
-        return -1;
-    }
 
 
 
