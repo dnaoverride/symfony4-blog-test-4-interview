@@ -79,7 +79,7 @@ class ArticleController extends AbstractController
         {
             $userHaveRightsToEdit = false;
         }
-       
+
         return $this->render('article/show.html.twig', [
             'article' => $article,
             'canedit' => $userHaveRightsToEdit,
