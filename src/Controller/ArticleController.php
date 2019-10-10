@@ -59,6 +59,8 @@ class ArticleController extends AbstractController
         ]);
     }
 
+
+
     /**
      * @Route("/article/{slug}", name="article_show", methods={"GET"})
      *
@@ -174,7 +176,20 @@ class ArticleController extends AbstractController
 
     }
 
+    public function did_cross_previous_path(Array $A)
+    {
+        for ($i = 3; $i < count($A); $i++) {// Počinjemo  for loop od 4. elementa niza pošto se ukrštanje neće desiti pre toga
+            if ( ($A[$i] >= $A[$i - 2] // Kornjača može ukrstiti put ako je trenutni korak veći ili jednak dužini od pre dva koraka
+                    || $A[$i - 1] >= $A[$i - 3] -($A[$i-5] || 0)   //ili je prethodni korak veći ili jednak dužini od pre tri koraka
+                    && $A[$i] >= $A[$i - 2] - $A[$i - 4] // i da li je trenutni korak veći ili jednak razlici drugog i četvrtog od trenutnog koraka
+                    && $A[$i - 2] >= $A[$i - 4])// i da li je drugi korak pre trenutnog veci ili jednak cetvrtom koraku od trenutnog
+                    && $A[$i - 1] <= $A[$i - 3] // i kad je  linija pre jednog koraka manja ili jednaka liniji od pre tri koraka
+            )
+                return $i+1; // Vraćamo uvećan index pošto se ukrštanje dešava na sledećem koraku
+        }
 
+        return 0; // U suprotnom vraćamo 0 pošto do ukrštanja nije došlo i kornjača hoda po spiralnoj putanji
+    }
 
 
 

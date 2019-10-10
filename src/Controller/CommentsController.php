@@ -50,13 +50,16 @@ class CommentsController extends AbstractController
 
         $em->persist($comment);
         $em->flush();
+        $commentId = $comment->getId();
 
-        return $this->render('article/show.html.twig', [
-            'article' => $article,
-            'id' => $articleid,
-            'canedit' => true,
-
-        ]);
+//        return $this->render('article/show.html.twig', [
+//            'article' => $article,
+//            'id' => $articleid,
+//            'canedit' => true,
+//            'editcommentid' => $commentId,
+//
+//        ]);
+        return $this->redirectToRoute('blog_index');
     }
 
     /**
